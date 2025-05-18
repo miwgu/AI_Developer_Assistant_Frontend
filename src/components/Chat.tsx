@@ -1,77 +1,65 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 
 const Chat = () => {
-  const [message, setMessage] = useState('');     
-  const [reply, setReply] = useState('');         
+  const [message, setMessage] = useState('');
+  const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(''); 
-  const [displayedReply, setDisplayedReply] = useState('');
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-  if (!reply) return;
-
-  let i = 0;
-  const interval = setInterval(() => {
-    setDisplayedReply(reply.slice(0, i + 1));
-    i++;
-    if (i >= reply.length) clearInterval(interval);
-  }, 40); // Adjust speed (ms per character)
-
-  return () => clearInterval(interval);
-}, [reply]);
+  const url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent page reload
-    setLoading(true);
-    setError('');
+    e.preventDefault();
     setReply('');
+    setError('');
+    setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:3000/api/chat', { message });
-      setReply(res.data.reply);
-    } catch (err: any) {
-      if (err.response) {
-        setError(err.response.data.error || 'Server returned an error');
-      } else if (err.request) {
-        setError('No response received from the server');
-      } else {
-        setError(err.message);
+      const response = await fetch(`${url}/api/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.body) throw new Error('ReadableStream not supported');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+      let accumulated = '';
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          accumulated += decoder.decode(value, { stream: true });
+          setReply(accumulated); // update UI progressively
+        }
       }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '1rem', fontFamily: 'Arial, sans-serif' }}>
+    <div>
       <h2>AI Dev Assistant</h2>
-
-      {/* Chat input form */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: '1rem' }}>
+      <form onSubmit={handleSubmit}>
         <input
-          type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Enter your question..."
-          style={{ padding: '0.5rem', width: '60%' }}
+          disabled={loading}
         />
-        <button type="submit" disabled={loading} style={{ marginLeft: '1rem' }}>
+        <button type="submit" disabled={loading || !message}>
           Send
         </button>
       </form>
 
-      {/* Loading message */}
       {loading && <p>⏳ Loading...</p>}
-
-      {/* Typing message */}
-      {loading && <p>🤖 Typing...</p>}
-      {displayedReply && <p>💡 {displayedReply}</p>}
-
-      {/* AI response */}
       {reply && <p>💡 {reply}</p>}
-
-      {/* Error message */}
       {error && <p style={{ color: 'red' }}>⚠️ {error}</p>}
     </div>
   );
