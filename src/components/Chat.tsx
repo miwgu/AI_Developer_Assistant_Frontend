@@ -1,12 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { fetchChatLog, postQuery, ChatEntry } from "../api/chatApi";
 import "./Chat.css";
-
-interface ChatEntry {
-  id: number;
-  question: string;
-  response: string;
-  created_at: Date;
-}
 
 const Chat = () => {
   const [message, setMessage] = useState("");
@@ -17,25 +11,28 @@ const Chat = () => {
 
   const url = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
+
   // Load chat history on component mount
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const res = await fetch(`${url}/api/getchatlog`);
-        const data = await res.json();
-        //Older messages first
-        const sorted = data.sort((a: ChatEntry, b: ChatEntry) => a.id - b.id);
-        setChatLog(sorted);
-      } catch (err) {
-        console.error("❌ Failed to load history:", err);
-      }
-    };
-    fetchHistory();
+    loadChatLog();
   }, []);
 
+  // Maintain chat scroll position
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatLog]);
+
+    const loadChatLog = async () => {
+    try {
+      const data = await fetchChatLog();
+      const sorted = data.sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      setChatLog(sorted);
+    } catch (err) {
+      console.error("❌ Failed to fetch chat log:", err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,27 +47,21 @@ const Chat = () => {
      so that the user can see their question while the response is being generated
     */
     const newEntry: ChatEntry = {
-      id: Date.now(),
+      id: -Date.now(),
       question: userMessage,
       response: "",
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
     };
+
     setChatLog((prev) => [...prev, newEntry]);
     const index = chatLog.length;
 
     try {
-      const response = await fetch(`${url}/api/query`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      if (!response.body) throw new Error("Stream not supported");
-
-      const reader = response.body.getReader();
+      const stream = await postQuery(userMessage);
+      const reader = stream.getReader();
       const decoder = new TextDecoder();
       let done = false;
-      let fullReply = "";
+      let fullReply = "";   
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
@@ -85,12 +76,13 @@ const Chat = () => {
             updated[index] = { ...updated[index], response: fullReply };
             return updated;
           });
-        }
+        }    
       }
     } catch (err: any) {
       setError(err.message || "An error occurred");
     } finally {
       setLoading(false);
+      await loadChatLog();
     }
   };
 
