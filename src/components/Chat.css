@@ -10,9 +10,9 @@
 }
 
 .chat-container {
-  max-width: 900px;
+  max-width: 900px;     
   margin: 0 auto;
-  height: 80vh;
+  height: 75vh;
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
@@ -21,6 +21,55 @@
   padding: 10px;
   background-color: #fff;
 }
+
+/* Phone */
+@media (max-width: 480px) {
+  .chat-container {
+    padding: 8px;
+    min-width: auto;
+  }
+}
+
+/* Mini Tablet (iPad Mini portrait) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .chat-container {
+    width: 95%;
+    padding: 12px;
+  }
+}
+
+/* iPad Mini (portrait), iPad Air (portrait), iPad Pro 11" (portrait) */
+@media (min-width: 768px) and (max-width: 834px) {
+  .chat-container {
+    width: 90%;
+    padding: 15px;
+  }
+}
+
+/* iPad Mini, iPad Air, iPad Pro 11" landscape  */
+@media (min-width: 835px) and (max-width: 1024px) {
+  .chat-container {
+    width: 850px; 
+    padding: 20px;
+  }
+}
+
+/* iPad Pro 12.9" portrait */
+@media (min-width: 1025px) and (max-width: 1180px) {
+  .chat-container {
+    width: 900px;
+    padding: 20px;
+  }
+}
+
+/* PC（large） */
+@media (min-width: 1181px) {
+  .chat-container {
+    width: 900px;
+    padding: 20px;
+  }
+}
+
 
 .chat-messages {
   flex: 1;
@@ -120,4 +169,11 @@
   margin: 16px auto;
   max-width: fit-content;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.empty-message {
+  text-align: center;
+  color: #888;
+  margin-top: 40px;
+  font-style: italic;
 }
