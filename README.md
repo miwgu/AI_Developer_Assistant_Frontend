@@ -1,54 +1,70 @@
-# React + TypeScript + Vite
+# AI_Developer_Assistant_Backend & Frontend – Fullstack LLM Chatbot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📚 Overview
 
-Currently, two official plugins are available:
+**AI Dev Assistant** is a full-stack web application that allows users to interact with a Large Language Model (LLM) through a minimal, like ChatGPT-style interface. Built with React, Express, and LangChain, this app integrates to LLM model mistral from Ollama, answer natural language queries. All interactions are stored in a MySQL database for logging purposes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> This project is part of a fullstack take-home assessment. It demonstrates LLM integration, clean API design, full-stack architecture, and optional Docker + DB implementation.
 
-## Expanding the ESLint configuration
+---
+## ✅ Features
+- Minimal chat UI (like ChatGPT)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Chat history display (oldest → newest)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Works seamlessly with backend via /api/query and /api/getchatlog
+
+- LLM powered by Mistral via Ollama
+
+---
+## 🔗 Backend Repository & Additional Details 
+For more information about the app architecture, backend setup, and API documentation, please visit:
+
+👉[Backend](https://github.com/miwgu/AI_Developer_Assistant_Backend)
+
+---
+
+## ⚙️ Frontend Setup Instructions
+
+1. Clone the Backend Repository
+```bash
+https://github.com/miwgu/AI_Developer_Assistant_Frontend.git
 ```
+2. Install Dependencies
+```bash
+npm install
+``` 
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🌍Enviroment file
+- Add a .env file in the project root
+- change settings for Docker or Local 
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+#local
+#VITE_BACKEND_URL=http://localhost:3000
+#Docker
+VITE_BACKEND_URL=http://localhost:3001
+``` 
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+
+## 🐳Docker Container Setup for `aida-frontend`
+
+1. Create Custom Docker Network (only need once)
+```bash
+sudo docker network create --subnet=172.25.0.0/24 aida-net
+docker network ls
+docker inspect fwk-net
 ```
+2. Build the Frontend Image
+```bash
+docker build -t aida-frontend .
+```
+3. Run the Container
+```bash
+docker stop aida-front
+docker rm aida-front
+docker run --name aida-front --network aida-net -p 4173:4173 -d aida-frontend
+```
+4. Access the App
+http://localhost:4173/
