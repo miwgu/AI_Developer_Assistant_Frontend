@@ -1,7 +1,7 @@
 import { Ollama } from "langchain/llms/ollama";
 
 const ollama = new Ollama({
-  model: "mistral", // "mistral"OR"tinyllama"
+  model: process.env.OLLAMA_MODEL || "mistral", // "mistral"OR"tinyllama"
   baseUrl: process.env.OLLAMA_URL || "http://127.0.0.1:11434",
 });
 

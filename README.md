@@ -190,6 +190,7 @@ chmod +x ./node_modules/.bin/ts-node
 ---
 `.env`
 
+```
 PORT=3001
 FRONTEND_ORIGIN=http://localhost:4173
 OLLAMA_URL=http://host.docker.internal:11434
@@ -202,4 +203,8 @@ DB_NAME=chatdb
 DB_PORT=3306
 
 # Front to backend
-VITE_BACKEND_URL=http://localhost:3001
+VITE_BACKEND_URL=http://aida-backend:3001
+
+# Ollama model
+OLLAMA_MODEL=qwen3:8b
+```
