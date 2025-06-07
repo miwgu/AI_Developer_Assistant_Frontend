@@ -185,3 +185,21 @@ chmod +x ./node_modules/.bin/ts-node
 - Delete history entries by ID
 - Create and group chat sessions by topic
 - Add search functionality in chat logs
+
+
+---
+`.env`
+
+PORT=3001
+FRONTEND_ORIGIN=http://localhost:4173
+OLLAMA_URL=http://host.docker.internal:11434
+
+# Database Docker
+DB_HOST=mysql
+DB_USER=myuser
+DB_PASSWORD=mypassword
+DB_NAME=chatdb
+DB_PORT=3306
+
+# Front to backend
+VITE_BACKEND_URL=http://localhost:3001
