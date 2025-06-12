@@ -6,7 +6,7 @@ interface ChatRequestBody {
   message: string;
 }
 
-exports.postQuery= async(req: Request<{}, {}, ChatRequestBody>, res: Response) => {
+export const postQuery= async(req: Request<{}, {}, ChatRequestBody>, res: Response) => {
   const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: "Message is required" });
@@ -30,7 +30,7 @@ exports.postQuery= async(req: Request<{}, {}, ChatRequestBody>, res: Response) =
   }
 }
 
-exports.getChats = async (req: Request, res: Response) => {
+export const getChats = async (req: Request, res: Response) => {
   try {
     const chatLogs = await getAllChatLogs();
     res.json(chatLogs);

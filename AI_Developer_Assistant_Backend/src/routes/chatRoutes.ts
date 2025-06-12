@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import * as chatController from '../controllers/chatController';
+
 const router = Router();
-const chatController = require ('../controllers/chatController');
+
 
 router.post('/query', chatController.postQuery);
 router.get('/getchatlog', chatController.getChats);

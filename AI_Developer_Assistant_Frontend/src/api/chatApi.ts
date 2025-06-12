@@ -6,6 +6,7 @@ export interface ChatEntry {
 }
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+console.log(import.meta.env.VITE_BACKEND_URL)
 
 export const fetchChatLog = async (): Promise<ChatEntry[]> => {
   const res = await fetch(`${BASE_URL}/api/getchatlog`);

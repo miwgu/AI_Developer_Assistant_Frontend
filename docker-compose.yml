@@ -10,7 +10,7 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
     ports:
-      - "3306:3306"                      # Map MySQL port to host
+      - "3307:3306"                      # Map MySQL port to host
     volumes:
       - mysql_data:/var/lib/mysql        # Persist database data
     networks:
@@ -20,9 +20,11 @@ services:
     build:
       context: ./AI_Developer_Assistant_Frontend
       dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL:  ${VITE_BACKEND_URL}   # <-- Pass build arg here
     container_name: aida-frontend
     environment:
-      - VITE_API_URL=${VITE_API_URL}
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
     ports:
       - "4173:4173"
     networks:
@@ -32,11 +34,11 @@ services:
 
   aida-backend:
     build:
-      context: .
+      context: ./AI_Developer_Assistant_Backend
       dockerfile: Dockerfile
     container_name: aida-backend         # Container name for backend
     ports:
-      - "3001:3001"                      # Expose backend port to host
+      - "3000:3000"                      # Expose backend port to host
     environment:
       # Backend app DB connection environment variables
       - PORT=${PORT}
