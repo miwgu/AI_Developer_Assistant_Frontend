@@ -1,18 +1,17 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: aida-mysql-container           # Container name for MySQL DB
+  postgres:
+    image: postgres:15
+    container_name: aida-postgres-container           # Container name for PostgreSQL DB
     restart: always
     environment:
-      # MySQL root and user credentials
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
+      # PostgreSQL root and user credentials
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "3307:3306"                      # Map MySQL port to host
+      - "5433:5432"                      # Map PostgreSQL port to host
     volumes:
-      - mysql_data:/var/lib/mysql        # Persist database data
+      - postgres_data:/var/lib/postgresql/data        # Persist database data
     networks:
       - aida-net-db
 
@@ -55,7 +54,7 @@ services:
     extra_hosts:
         - "host.docker.internal:host-gateway"    
     depends_on:
-      - mysql
+      - postgres
 
 networks:
   aida-net-db:
@@ -64,4 +63,4 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  postgres_data:
