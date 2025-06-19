@@ -2,7 +2,7 @@
 import { db } from './db'; 
 
 export async function saveChatLog(question: string, response: string) {
-  const sql = 'INSERT INTO chat_logs (question, response) VALUES (?, ?)';
+  const sql = 'INSERT INTO chat_logs (question, response) VALUES ($1, $2) RETURNING *';
   
   try {
      const result= await db.query(sql, [question, response]);

@@ -1,9 +1,11 @@
 import { saveChatLog } from '../db/chatRepository';
-import { getAIResponseStream } from '../llm/ollama';
+import { OllamaLLM } from '../llm/ollama';
+
+const ollama = new OllamaLLM();
 
 export async function handleChatQuery(message: string): Promise<AsyncGenerator<string>> {
   const chunks: string[] = [];
-  const stream = getAIResponseStream(message);
+  const stream = ollama.stream(message);
 
   const asyncStream = (async function* () {
     for await (const token of stream) {
